@@ -129,6 +129,21 @@ mod tests {
     fn test_correctness(solution: Box<dyn Fn(&str) -> Result<String, Box<dyn Error>>>) {
         let test_vectors = [
             "101",
+            "quip",
+            "PPCG",
+            "Mego",
+            "Noob 5",
+            "penguin",
+            "867-5309",
+            "2_sPoOkY_4_mE",
+            "The Nineteenth Byte",
+            "penguins@SouthPole.org",
+            "8xM3R__5ltZgrkJ.-W b",
+            "correcthorsebatterystaple",
+            "verylongRUNOFCAPSandnocaps",
+            "This is an English sentence.",
+            "WNtza.akjzSP2GIOV9X .OepmUQ-mo",
+            "Programming Puzzles and Code Golf",
         ];
         for test_vector in test_vectors {
             assert_eq!(kbd_input(&solution(test_vector).unwrap()).unwrap(), test_vector);
