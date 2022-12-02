@@ -3,7 +3,28 @@
 use std::error::Error;
 
 fn main() {
-    println!("Hello, world!");
+    let naive_cost = compute_cost(Box::new(sol_naive_nonwrapping));
+
+    for contender in [
+        ("Naive Non-Wrapping", Box::new(sol_naive_nonwrapping)),
+    ] {
+        let (name, solution) = contender;
+        let cost = compute_cost(solution);
+        println!("{name}: {:.2}%", cost / naive_cost * 100.0);
+    }
+}
+
+fn compute_cost(solution: Box<dyn Fn(&str) -> Result<String, Box<dyn Error>>>) -> f64 {
+    let mut cost = 0.0;
+
+    for test_vector in TEST_VECTORS {
+        match solution(*test_vector) {
+            Ok(commands) => cost = cost + commands.len() as f64,
+            Err(_) => return f64::NAN,
+        }
+    }
+
+    cost
 }
 
 const UPPER_CHARS: [char; 40] = [
@@ -19,6 +40,25 @@ const LOWER_CHARS: [char; 40] = [
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-',
     'z', 'x', 'c', 'v', 'b', 'n', 'm', '_', '@', '.',
 ];
+
+const TEST_VECTORS: &[&str] = [
+    "101",
+    "quip",
+    "PPCG",
+    "Mego",
+    "Noob 5",
+    "penguin",
+    "867-5309",
+    "2_sPoOkY_4_mE",
+    "The Nineteenth Byte",
+    "penguins@SouthPole.org",
+    "8xM3R__5ltZgrkJ.-W b",
+    "correcthorsebatterystaple",
+    "verylongRUNOFCAPSandnocaps",
+    "This is an English sentence.",
+    "WNtza.akjzSP2GIOV9X .OepmUQ-mo",
+    "Programming Puzzles and Code Golf",
+].as_slice();
 
 fn kbd_input(commands: &str) -> Result<String, Box<dyn Error>> {
     let mut cursor = (0, 0);
@@ -113,6 +153,7 @@ mod tests {
     use std::error::Error;
 
     use super::{
+        TEST_VECTORS,
         kbd_input,
         sol_naive_nonwrapping,
     };
@@ -131,26 +172,8 @@ mod tests {
     }
 
     fn test_correctness(solution: Box<dyn Fn(&str) -> Result<String, Box<dyn Error>>>) {
-        let test_vectors = [
-            "101",
-            "quip",
-            "PPCG",
-            "Mego",
-            "Noob 5",
-            "penguin",
-            "867-5309",
-            "2_sPoOkY_4_mE",
-            "The Nineteenth Byte",
-            "penguins@SouthPole.org",
-            "8xM3R__5ltZgrkJ.-W b",
-            "correcthorsebatterystaple",
-            "verylongRUNOFCAPSandnocaps",
-            "This is an English sentence.",
-            "WNtza.akjzSP2GIOV9X .OepmUQ-mo",
-            "Programming Puzzles and Code Golf",
-        ];
-        for test_vector in test_vectors {
-            assert_eq!(kbd_input(&solution(test_vector).unwrap()).unwrap(), test_vector);
+        for test_vector in TEST_VECTORS {
+            assert_eq!(kbd_input(&solution(test_vector).unwrap()).unwrap(), *test_vector);
         }
     }
 }
