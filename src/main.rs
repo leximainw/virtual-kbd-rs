@@ -32,7 +32,10 @@ fn kbd_input(commands: &str) -> Result<String, Box<dyn Error>> {
             'R' | 'r' => cursor.0 = (cursor.0 + 1) % 10,
             'U' | 'u' => cursor.1 = (cursor.1 + 3) % 4,
             'D' | 'd' => cursor.1 = (cursor.1 + 1) % 4,
-            'Y' | 'y' => text.insert(pointer, ' '),
+            'Y' | 'y' => {
+                text.insert(pointer, ' ');
+                pointer = pointer + 1;
+            },
             'B' | 'b' => pointer = std::cmp::max(pointer - 1, 0),
             'F' | 'f' => pointer = std::cmp::min(pointer + 1, text.len()),
             'C' | 'c' => caps_lock = !caps_lock,
