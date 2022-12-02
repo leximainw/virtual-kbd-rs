@@ -85,6 +85,7 @@ fn sol_naive_nonwrapping(input: &str) -> Result<String, Box<dyn Error>> {
             } else {
                 commands.push_str(&"U".repeat(curr_y - new_y));
             }
+            curr_y = new_y;
         }
 
         if curr_x != new_x {
